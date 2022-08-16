@@ -5,7 +5,7 @@ from os import path
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-from gscal.gscal import MainWindow
+from . import gscal
 
 def run():
     # Default configuration
@@ -19,18 +19,17 @@ def run():
     config_path = "~/.config/gscal/gscal.toml"
 
     try:
-        # Parsing options and arguments
+        # Parse options and arguments
         opts, args = getopt.getopt(sys.argv[1:], "hvc:", ["help", "version", "config="])
     except getopt.GetoptError as e:
-        print("[ERRROR]", e)
+        print("[ERROR]", e)
         sys.exit(2)
 
-    # Handling options
+    # Handle options
     for o, a in opts:
         if o in ["-h", "--help"]:
-            f = open(path.dirname(__file__) + "/data/help.txt", "r")
-            print(f.read())
-            f.close()
+            # Print help message
+            print(open(path.dirname(__file__) + "/data/help.txt", "r").read())
             sys.exit()
         elif o in ["-v", "--version"]:
             print("gscal", metadata.version("gscal"))
@@ -39,21 +38,22 @@ def run():
             if path.isfile(path.expanduser(a)):
                 config_path = a
             else:
-                print(f"[WARNING] File {a} not found: reading from default config path.")
+                print(f"[WARNING] File {a} not found: reading from default config path ({config_path}).")
 
-    # Handling arguments (not supported)
+    # Handle arguments (not supported)
     for a in args:
         print("[WARNING] Unknown argument:", a)
 
     try:
-        # Importing settings from config file
+        # Import settings from config file
         config = toml.load(path.expanduser(config_path))
 
         # For each key of the default config dict
-        for i in default_config:
+        for key in default_config:
             # If the value type does not match the default type or if sunday_color does not match a hex color pattern it falls back to the default
-            if i not in config or type(config[i]) != type(default_config[i]) or (i == "sunday_color" and re.match("^#[0-9a-fA-F]{6}$", config[i]) is None):
-                config[i] = default_config[i]
+            if key not in config or type(config[key]) != type(default_config[key]) or (key == "sunday_color" and re.match("^#[0-9a-fA-F]{6}$", config[key]) is None):
+                config[key] = default_config[key]
+
     except FileNotFoundError:
         print("[WARNING] Config file not found: default configuration loaded.")
         config = default_config
@@ -61,13 +61,12 @@ def run():
         print(f"[WARNING] Error in the config file: {e}. Default configuration loaded.")
         config = default_config
 
-    # Initializing main window
-    win = MainWindow(config)
-    win.connect("destroy", Gtk.main_quit)
+    # Initialize main window
+    win = gscal.MainWindow(config)
     win.show_all()
 
     try:
-        # Launching the GTK loop
+        # Launch the GTK loop
         Gtk.main()
     except KeyboardInterrupt:
         print("\n[WARNING] Interrupted by user.")
