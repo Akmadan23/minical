@@ -2,6 +2,6 @@ dist/
 src/gscal.egg-info/
 src/gscal/*
 !src/gscal/__init__.py
-!src/gscal/main.py
+!src/gscal/__main__.py
 !src/gscal/gscal.py
 !src/gscal/data/
