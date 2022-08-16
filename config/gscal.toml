@@ -6,3 +6,7 @@ sunday_first = false
 
 # Defines the color of sunday's heading label
 sunday_color = "#CC0000"
+
+[keybindings]
+next_month = "n"
+prev_month = "p"

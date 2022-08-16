@@ -17,11 +17,17 @@ class MainWindow(Gtk.Window):
         # Importing config as object variable
         self.config = c
 
+        # Handling events
+        self.connect("key-press-event", self.key_listener)
+        self.connect("destroy", Gtk.main_quit)
+
+        # Setting window properties
+        self.set_border_width(self.sp)
+        self.set_resizable(self.config["window_resizable"])
+
         # Main frame
         vboxFrame = Gtk.Box(spacing = self.sp, orientation = 1)
         self.add(vboxFrame)
-        self.set_border_width(self.sp)
-        self.set_resizable(self.config["window_resizable"])
 
         ######## HEADER ########
 
@@ -102,6 +108,12 @@ class MainWindow(Gtk.Window):
 
         # Setting month days for the first time
         self.month_changed(None)
+
+    def key_listener(self, widget, key):
+        if key.string == self.config["keybindings"]["next_month"]:
+            self.month_inc(widget, 1)
+        elif key.string == self.config["keybindings"]["prev_month"]:
+            self.month_inc(widget, -1)
 
     def month_inc(self, widget, inc):
         self.month += inc

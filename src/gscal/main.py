@@ -13,6 +13,10 @@ def run():
         "window_resizable": False,
         "sunday_first": False,
         "sunday_color": "#CC0000",
+        "keybindings": {
+            "next_month": "n",
+            "prev_month": "p",
+        }
     }
 
     # Default config file path
@@ -48,11 +52,24 @@ def run():
         # Import settings from config file
         config = toml.load(path.expanduser(config_path))
 
+        # Whether is necessary to check key bindings
+        check_bindings = True
+
         # For each key of the default config dict
         for key in default_config:
             # If the value type does not match the default type or if sunday_color does not match a hex color pattern it falls back to the default
             if key not in config or type(config[key]) != type(default_config[key]) or (key == "sunday_color" and re.match("^#[0-9a-fA-F]{6}$", config[key]) is None):
                 config[key] = default_config[key]
+
+                # If the keybindings section is not declared in user's config there is no need to check each of them
+                if key == "keybindings":
+                    check_bindings = False
+
+        if check_bindings:
+            for key in default_config["keybindings"]:
+                # If the value type is not a string or it's not a single character
+                if key not in config["keybindings"] or type(config["keybindings"][key]) != str or len(config) != 1:
+                    config["keybindings"][key] = default_config["keybindings"][key]
 
     except FileNotFoundError:
         print("[WARNING] Config file not found: default configuration loaded.")
