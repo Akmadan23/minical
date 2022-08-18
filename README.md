@@ -1,4 +1,7 @@
 # gscal (GTK Simple Calendar)
+![PyPI](https://img.shields.io/pypi/v/gscal)
+![PyPI - License](https://img.shields.io/pypi/l/gscal?color=blue)
+
 Extremely minimal calendar app inspired by [Gsimplecal](https://github.com/dmedvinsky/gsimplecal).
 
 ## Install
