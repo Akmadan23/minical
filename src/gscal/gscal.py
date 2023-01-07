@@ -11,17 +11,17 @@ class MainWindow(Gtk.Window):
     year = dt.date.today().year
 
     def __init__(self, c):
-        # Setting window title
+        # Set window title
         super().__init__(title = "Gscal")
 
-        # Importing config as object variable
+        # Import config as object variable
         self.config = c
 
-        # Handling events
+        # Handle events
         self.connect("key-press-event", self.key_listener)
         self.connect("destroy", Gtk.main_quit)
 
-        # Setting window properties
+        # Set window properties
         self.set_border_width(self.sp)
         self.set_resizable(self.config["window_resizable"])
 
@@ -35,7 +35,7 @@ class MainWindow(Gtk.Window):
         hboxHeader = Gtk.Box(spacing = self.sp)
         vboxFrame.pack_start(hboxHeader, 0, 0, 0)
 
-        # Configuring month's combo box
+        # Configure month's combo box
         monthText = Gtk.CellRendererText()
         monthStore = Gtk.ListStore(str)
 
@@ -51,7 +51,7 @@ class MainWindow(Gtk.Window):
         self.cbxMonth.connect("changed", self.month_changed)
         hboxHeader.pack_start(self.cbxMonth, 0, 0, 0)
 
-        # Configuring year's spin button
+        # Configure year's spin button
         adjYear = Gtk.Adjustment(
             value = self.year,
             lower = 1,
@@ -77,7 +77,7 @@ class MainWindow(Gtk.Window):
 
                 if row == 0:
                     sunday = self.config["sunday_first"]
-                    text = cal.day_abbr[col - sunday].capitalize()
+                    text = str(cal.day_abbr[col - sunday]).capitalize()
 
                     if (sunday == 1 and col == 0) or (sunday == 0 and col == 6):
                         color = self.config["sunday_color"]
@@ -97,16 +97,18 @@ class MainWindow(Gtk.Window):
         # Previous month button
         self.btnPrevMonth = Gtk.Button()
         self.btnPrevMonth.set_size_request(120, 0)
+        self.btnPrevMonth.set_relief(Gtk.ReliefStyle.NONE)
         self.btnPrevMonth.connect("clicked", self.month_inc, -1)
         hboxFooter.pack_start(self.btnPrevMonth, 1, 1, 0)
 
         # Next month button
         self.btnNextMonth = Gtk.Button()
         self.btnNextMonth.set_size_request(120, 0)
+        self.btnNextMonth.set_relief(Gtk.ReliefStyle.NONE)
         self.btnNextMonth.connect("clicked", self.month_inc, 1)
         hboxFooter.pack_start(self.btnNextMonth, 1, 1, 0)
 
-        # Setting month days for the first time
+        # Set month days for the first time
         self.month_changed(None)
 
     def key_listener(self, widget, key):
@@ -115,7 +117,7 @@ class MainWindow(Gtk.Window):
         elif key.string == self.config["keybindings"]["prev_month"]:
             self.month_inc(widget, -1)
 
-    def month_inc(self, widget, inc):
+    def month_inc(self, _, inc):
         self.month += inc
 
         if self.month == 0:
@@ -129,11 +131,11 @@ class MainWindow(Gtk.Window):
         self.spnYear.set_value(self.year)
 
     def month_changed(self, widget):
-        # Updating the widget only if the call comes from itself
+        # Update the widget only if the call comes from itself
         if widget:
             self.month = widget.get_active() + 1
 
-        # Updating prev and next month buttons
+        # Update prev and next month buttons
         self.btnPrevMonth.set_label("\u25C0  " + cal.month_name[self.month - 1 or 12].capitalize())
         self.btnNextMonth.set_label(cal.month_name[self.month - 12 or 1].capitalize() + "  \u25B6")
 
@@ -152,7 +154,7 @@ class MainWindow(Gtk.Window):
                 else:
                     last = (dt.date(self.year, self.month + 1, 1) - dt.timedelta(days = 1)).day
 
-                # Determining each day of the month depending on row, column, offset and first day of the month
+                # Determine each day of the month depending on row, column, offset and first day of the month
                 num = 1 + col - first + 7 * (row - 1) - self.config["sunday_first"]
 
                 if num < 1:
