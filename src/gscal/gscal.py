@@ -9,6 +9,7 @@ class MainWindow(Gtk.Window):
     day = dt.date.today().day
     month = dt.date.today().month
     year = dt.date.today().year
+    style = Gtk.StyleContext()
 
     def __init__(self, c):
         # Set window title
@@ -16,6 +17,9 @@ class MainWindow(Gtk.Window):
 
         # Import config as object variable
         self.config = c
+
+        # Define foreground color based on current GTK theme
+        self.fg_color = self.style.lookup_color("fg_color")[1].to_color().to_string()
 
         # Handle events
         self.connect("key-press-event", self.key_listener)
@@ -165,7 +169,7 @@ class MainWindow(Gtk.Window):
                     nxt += 1
                     fg = "gray"
                 else:
-                    fg = "white"
+                    fg = self.fg_color
 
                     if self.day == num and self.month == MainWindow.month and self.year == MainWindow.year:
                         bold = 1
